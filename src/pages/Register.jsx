@@ -10,10 +10,11 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/admin/register', { name, email, password });
+      const response = await axios.post('http://localhost:5000/api/admin/register', { name, email, password });
       localStorage.setItem('adminToken', response.data.token);
       alert('Registration successful!');
     } catch (error) {
+      console.error(error.response); // Log error response for more details
       alert('Error registering admin.');
     }
   };
