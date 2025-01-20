@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/admin/login', { email, password });
       localStorage.setItem('adminToken', response.data.token);
+      setIsLoggedIn(true);  // Set isLoggedIn state to true
       alert('Login successful!');
       navigate('/dashboard');
     } catch (error) {
