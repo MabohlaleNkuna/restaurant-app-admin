@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import axios from 'axios';
+import { FaEdit, FaTrashAlt, FaTrash } from 'react-icons/fa';
 
 const ManageRestaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -63,23 +64,26 @@ const ManageRestaurants = () => {
   };
 
   return (
-    <div>
+    <div className="manage-restaurants">
       <h1>Manage Restaurants</h1>
       {restaurants.map((restaurant) => (
-        <div key={restaurant._id}>
+        <div key={restaurant._id} className="restaurant-item">
           <img 
             src={`http://localhost:5000/${restaurant.image}`} 
             alt={restaurant.name} 
             width="100" 
+            className="restaurant-image"
           />
           <p>{restaurant.name}</p>
           <p>{restaurant.location}</p>
           <p>{restaurant.cuisine}</p>
 
-          <button onClick={() => handleDelete(restaurant._id)}>Delete</button>
+          <button className="delete-btn" onClick={() => handleDelete(restaurant._id)}>
+            <FaTrashAlt />
+          </button>
 
           {editMode === restaurant._id ? (
-            <div>
+            <div className="edit-form">
               <input
                 type="text"
                 placeholder="Name"
@@ -102,15 +106,136 @@ const ManageRestaurants = () => {
                 type="file"
                 onChange={(e) => setImage(e.target.files[0])}
               />
-              <button onClick={() => handleUpdate(restaurant._id)}>Save</button>
-              <button onClick={() => setEditMode(null)}>Cancel</button>
+              <button className="save-btn" onClick={() => handleUpdate(restaurant._id)}>
+                Save
+              </button>
+              <button className="cancel-btn" onClick={() => setEditMode(null)}>
+                Cancel
+              </button>
             </div>
           ) : (
-            <button onClick={() => handleEdit(restaurant)}>Edit</button>
+            <button className="edit-btn" onClick={() => handleEdit(restaurant)}>
+              <FaEdit />
+            </button>
           )}
         </div>
       ))}
-      <button onClick={handleDeleteAll}>Delete All</button>
+      <button className="delete-all-btn" onClick={handleDeleteAll}>
+        <FaTrash /> Delete All
+      </button>
+
+      <style jsx>{`
+        .manage-restaurants {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          height: 100vh;
+          padding: 20px;
+          background-color: black;
+          color: white;
+        }
+
+        .restaurant-item {
+          background-color: transparent;
+          border: 2px solid #004aad;
+          border-radius: 20px;
+          padding: 20px;
+          margin: 10px;
+          width: 100%;
+          max-width: 600px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .restaurant-item img {
+          border-radius: 8px;
+        }
+
+        button {
+          background-color: #004aad;
+          color: #fff;
+          border: none;
+          padding: 10px;
+          margin-top: 10px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background-color: #241d10;
+        }
+
+        .delete-btn, .edit-btn, .delete-all-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .delete-btn {
+          background-color: #f44336;
+        }
+
+        .delete-all-btn {
+          background-color: #f44336;
+          width: 100%;
+          margin-top: 20px;
+        }
+
+        .edit-btn {
+          background-color: #ff9800;
+        }
+
+        .save-btn, .cancel-btn {
+          background-color: #4caf50;
+          margin-top: 10px;
+        }
+
+        .save-btn:hover, .cancel-btn:hover {
+          background-color: #388e3c;
+        }
+
+        .edit-form input {
+          margin: 5px;
+          padding: 10px;
+          width: 100%;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+        }
+
+        @media (max-width: 768px) {
+          .restaurant-item {
+            max-width: 90%;
+          }
+
+          .restaurant-item img {
+            width: 80%;
+          }
+
+          button {
+            width: 100%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .restaurant-item {
+            padding: 15px;
+          }
+
+          .restaurant-item img {
+            width: 70%;
+          }
+
+          button {
+            padding: 8px;
+          }
+
+          .edit-form input {
+            padding: 8px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

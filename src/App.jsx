@@ -18,7 +18,6 @@ const App = () => {
           <Route path="/dashboard" element={<AdminDashboard />} />
           <Route path="/manage-restaurants" element={<ManageRestaurants />} />
           <Route path="/add-restaurant" element={<AddRestaurant />} />
-          {/* Fallback for undefined routes */}
           <Route path="*" element={<div style={styles.notFound}>404 - Page Not Found</div>} />
         </Routes>
       </div>
@@ -27,9 +26,25 @@ const App = () => {
 };
 
 const styles = {
-  appContainer: { padding: '20px', textAlign: 'center', backgroundColor: '#F4C561', minHeight: '100vh' },
-  title: { color: '#241D10', fontSize: '32px' },
-  notFound: { color: '#FF0000', fontSize: '24px', marginTop: '20px' },
+  appContainer: { 
+    padding: '0', 
+    margin: '0', 
+    textAlign: 'center', 
+    backgroundColor: 'black', 
+    minHeight: '100vh', 
+    width: '100%',
+    boxSizing: 'border-box'
+  },
+  title: { 
+    color: 'white', 
+    fontSize: '32px',
+    marginBottom: '20px' 
+  },
+  notFound: { 
+    color: '#FF0000', 
+    fontSize: '24px', 
+    marginTop: '20px' 
+  },
 };
 
 export default App;
