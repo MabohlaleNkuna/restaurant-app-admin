@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -12,6 +14,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/api/admin/login', { email, password });
       localStorage.setItem('adminToken', response.data.token);
       alert('Login successful!');
+      navigate('/admin-dashboard');
     } catch (error) {
       alert('Invalid credentials.');
     }

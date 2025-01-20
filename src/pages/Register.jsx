@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Import Link
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -13,8 +15,8 @@ const Register = () => {
       const response = await axios.post('http://localhost:5000/api/admin/register', { name, email, password });
       localStorage.setItem('adminToken', response.data.token);
       alert('Registration successful!');
+      navigate('/login');
     } catch (error) {
-      console.error(error.response); // Log error response for more details
       alert('Error registering admin.');
     }
   };
