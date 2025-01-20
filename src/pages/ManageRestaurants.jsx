@@ -5,61 +5,44 @@ const ManageRestaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await axios.get('/api/restaurants');
-        setRestaurants(response.data);
-      } catch (error) {
-        alert('Error fetching restaurants');
-      }
-    };
-    fetchRestaurants();
+    axios.get('/api/restaurants')
+      .then((res) => {
+        setRestaurants(res.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching restaurants:', error);
+      });
   }, []);
 
+  const handleDelete = async (id) => {
+    await axios.delete(`/api/restaurants/${id}`);
+    setRestaurants(restaurants.filter((r) => r._id !== id));
+  };
+
+  const handleDeleteAll = async () => {
+    await axios.delete('/api/restaurants/deleteAll');
+    setRestaurants([]);
+  };
+
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Manage Restaurants</h1>
-      <div style={styles.restaurantList}>
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.id} style={styles.restaurant}>
-            <p>{restaurant.name}</p>
-          </div>
-        ))}
-      </div>
-      <button style={styles.button}>Add Restaurant</button>
+    <div>
+      <h1>Manage Restaurants</h1>
+      {restaurants.map((restaurant) => (
+        <div key={restaurant._id}>
+          <img 
+            src={`http://localhost:5000/${restaurant.image}`} 
+            alt={restaurant.name} 
+            width="100" 
+          />
+          <p>{restaurant.name}</p>
+          <p>{restaurant.location}</p>
+          <p>{restaurant.cuisine}</p>
+          <button onClick={() => handleDelete(restaurant._id)}>Delete</button>
+        </div>
+      ))}
+      <button onClick={handleDeleteAll}>Delete All</button>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    padding: '20px',
-    textAlign: 'center',
-    backgroundColor: '#F4C561',
-    color: '#241D10',
-    minHeight: '100vh',
-  },
-  title: {
-    fontSize: '28px',
-    marginBottom: '20px',
-  },
-  restaurantList: {
-    marginBottom: '20px',
-  },
-  restaurant: {
-    padding: '10px',
-    backgroundColor: '#fff',
-    marginBottom: '10px',
-    borderRadius: '5px',
-  },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#241D10',
-    color: '#F4C561',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
 };
 
 export default ManageRestaurants;

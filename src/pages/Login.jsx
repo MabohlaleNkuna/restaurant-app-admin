@@ -14,7 +14,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/api/admin/login', { email, password });
       localStorage.setItem('adminToken', response.data.token);
       alert('Login successful!');
-      navigate('/admin-dashboard');
+      navigate('/dashboard');
     } catch (error) {
       alert('Invalid credentials.');
     }
