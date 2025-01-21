@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrashAlt, FaTrash } from 'react-icons/fa';
 
@@ -63,13 +63,29 @@ const ManageRestaurants = () => {
     setCuisine(restaurant.cuisine);
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'your_upload_preset');  // Use your Cloudinary upload preset
+
+      try {
+        const response = await axios.post('https://api.cloudinary.com/v1_1/your_cloud_name/image/upload', formData);
+        setImage(response.data.secure_url); // Cloudinary image URL
+      } catch (err) {
+        console.error('Error uploading image:', err);
+      }
+    }
+  };
+
   return (
     <div className="manage-restaurants">
       <h1>Manage Restaurants</h1>
       {restaurants.map((restaurant) => (
         <div key={restaurant._id} className="restaurant-item">
           <img 
-            src={`http://localhost:5000/${restaurant.image}`} 
+            src={restaurant.image} 
             alt={restaurant.name} 
             width="100" 
             className="restaurant-image"
@@ -104,7 +120,7 @@ const ManageRestaurants = () => {
               />
               <input
                 type="file"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={handleImageUpload}
               />
               <button className="save-btn" onClick={() => handleUpdate(restaurant._id)}>
                 Save
@@ -123,7 +139,6 @@ const ManageRestaurants = () => {
       <button className="delete-all-btn" onClick={handleDeleteAll}>
         <FaTrash /> Delete All
       </button>
-
       <style jsx>{`
         .manage-restaurants {
           display: flex;

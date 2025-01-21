@@ -16,24 +16,26 @@ const AddRestaurant = () => {
       if (image) {
         formData.append('image', image);
       }
-  
-      await axios.post('http://localhost:5000/api/restaurants', formData, {
+
+      // Sending POST request to backend
+      const response = await axios.post('http://localhost:5000/api/restaurants', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-  
+
+      console.log('Restaurant added:', response.data);
       alert('Restaurant added successfully');
-  
+
       // Clear form fields
       setName('');
       setLocation('');
       setCuisine('');
       setImage(null);
     } catch (error) {
-      console.error('Error adding restaurant:', error);
-      alert('Failed to add restaurant');
+      console.error('Error adding restaurant:', error.response ? error.response.data : error.message);
+      alert(`Failed to add restaurant: ${error.response ? error.response.data.message : error.message}`);
     }
   };
-  
+
   return (
     <div>
       <h1>Add Restaurant</h1>
@@ -57,7 +59,7 @@ const AddRestaurant = () => {
       />
       <input
         type="file"
-        onChange={(e) => setImage(e.target.files[0])} 
+        onChange={(e) => setImage(e.target.files[0])}
       />
       <button onClick={handleAddRestaurant}>Add</button>
     </div>
