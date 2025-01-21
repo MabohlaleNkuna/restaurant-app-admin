@@ -14,21 +14,26 @@ const AddRestaurant = () => {
       formData.append('location', location);
       formData.append('cuisine', cuisine);
       if (image) {
-        formData.append('image', image); 
+        formData.append('image', image);
       }
-
+  
       await axios.post('http://localhost:5000/api/restaurants', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      
+  
       alert('Restaurant added successfully');
-      window.location.reload();
+  
+      // Clear form fields
+      setName('');
+      setLocation('');
+      setCuisine('');
+      setImage(null);
     } catch (error) {
       console.error('Error adding restaurant:', error);
       alert('Failed to add restaurant');
     }
   };
-
+  
   return (
     <div>
       <h1>Add Restaurant</h1>
