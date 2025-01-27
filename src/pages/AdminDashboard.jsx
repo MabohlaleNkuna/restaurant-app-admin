@@ -1,21 +1,33 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement } from 'chart.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement);
 
 const AdminDashboard = () => {
-
-  const chartData = {
+  const lineChartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
     datasets: [
       {
         label: 'Restaurants Available',
         data: [10, 20, 25, 30, 35, 40, 45],
-        fill: true,
-        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 2,
         tension: 0.4,
+      },
+    ],
+  };
+
+  const barChartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+    datasets: [
+      {
+        label: 'Monthly Revenue',
+        data: [5000, 7000, 8000, 12000, 15000, 18000, 20000],
+        backgroundColor: ['#F4C561', '#004AAD', '#241D10', '#F4C561', '#004AAD', '#241D10', '#F4C561'],
+        borderWidth: 1,
       },
     ],
   };
@@ -23,63 +35,33 @@ const AdminDashboard = () => {
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      },
+      legend: { position: 'top' },
+      tooltip: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
+    scales: { y: { beginAtZero: true } },
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Admin Dashboard</h1>
+    <div className="container py-5 text-light" style={{ backgroundColor: 'black', minHeight: '100vh' }}>
+      <h1 className="text-center mb-5" style={{ color: '#F4C561' }}>Admin Dashboard</h1>
 
-      <div style={styles.chartContainer}>
-        <h2 style={styles.chartTitle}>Restaurant Growth</h2>
-        <Line data={chartData} options={chartOptions} width={300} height={200} />
+      <div className="row">
+        <div className="col-lg-6 col-md-12 mb-4">
+          <div className="p-4 bg-dark rounded shadow">
+            <h3 className="text-center mb-3" style={{ color: '#F4C561' }}>Restaurant Growth</h3>
+            <Line data={lineChartData} options={chartOptions} />
+          </div>
+        </div>
+
+        <div className="col-lg-6 col-md-12 mb-4">
+          <div className="p-4 bg-dark rounded shadow">
+            <h3 className="text-center mb-3" style={{ color: '#F4C561' }}>Monthly Revenue</h3>
+            <Bar data={barChartData} options={chartOptions} />
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    padding: '30px',
-    textAlign: 'center',
-    backgroundColor: 'black',
-    color: '#F4C561',
-    minHeight: '100vh',
-    fontFamily: 'Inter, Arial, sans-serif',
-  },
-  title: {
-    fontSize: '36px',
-    marginBottom: '20px',
-    fontWeight: '600',
-    color: '#F4C561',
-  },
-  chartContainer: {
-    marginBottom: '40px',
-    padding: '20px',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
-    borderRadius: '12px',
-    boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.3)',
-    display: 'inline-block',
-    width: '100%',
-    maxWidth: '500px',
-  },
-  chartTitle: {
-    fontSize: '24px',
-    marginBottom: '20px',
-    color: '#F4C561',
-    fontWeight: '600',
-  },
 };
 
 export default AdminDashboard;

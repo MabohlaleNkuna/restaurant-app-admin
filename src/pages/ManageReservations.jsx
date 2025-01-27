@@ -1,157 +1,125 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ManageReservations = () => {
   const [reservations, setReservations] = useState([]);
   const [editMode, setEditMode] = useState(null);
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [partySize, setPartySize] = useState('');
+  const [formData, setFormData] = useState({ date: '', time: '', partySize: '' });
 
+  // Fetch reservations on load and periodically update
   useEffect(() => {
-    axios.get('/api/admin/reservations')
-      .then((res) => {
-        setReservations(res.data);
-      })
-      .catch((error) => {
+    const fetchReservations = async () => {
+      try {
+        const { data } = await axios.get('/api/admin/reservations'); // Make sure this is correct URL for your backend
+        setReservations(data);
+      } catch (error) {
         console.error('Error fetching reservations:', error);
-      });
+      }
+    };
+
+    fetchReservations();
+
+    const interval = setInterval(fetchReservations, 5000); // Poll every 5 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const handleUpdate = async (id) => {
-    const updatedData = { date, time, partySize };
-    await axios.put(`/api/admin/reservations/${id}`, updatedData);
-    setReservations(reservations.map((reservation) =>
-      reservation._id === id ? { ...reservation, date, time, partySize } : reservation
-    ));
-    setEditMode(null);
-    setDate('');
-    setTime('');
-    setPartySize('');
+    try {
+      const updatedReservation = await axios.put(`/api/admin/reservations/${id}`, formData);
+      setReservations((prev) =>
+        prev.map((r) => (r._id === id ? { ...r, ...updatedReservation.data } : r))
+      );
+      setEditMode(null);
+      setFormData({ date: '', time: '', partySize: '' });
+    } catch (error) {
+      console.error('Error updating reservation:', error);
+    }
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`/api/admin/reservations/${id}`);
-    setReservations(reservations.filter((r) => r._id !== id));
+    try {
+      await axios.delete(`/api/admin/reservations/${id}`);
+      setReservations((prev) => prev.filter((r) => r._id !== id));
+    } catch (error) {
+      console.error('Error deleting reservation:', error);
+    }
   };
 
   return (
-    <div className="manage-reservations">
-      <h1>Manage Reservations</h1>
-      {reservations.map((reservation) => (
-        <div key={reservation._id} className="reservation-item">
-          <p><strong>Restaurant:</strong> {reservation.restaurant.name}</p>
-          <p><strong>Date:</strong> {new Date(reservation.date).toLocaleDateString()}</p>
-          <p><strong>Time:</strong> {reservation.time}</p>
-          <p><strong>Party Size:</strong> {reservation.partySize}</p>
-          <p><strong>Status:</strong> {reservation.status}</p>
-
-          <button className="delete-btn" onClick={() => handleDelete(reservation._id)}>
-            <FaTrashAlt /> Delete
-          </button>
-
-          {editMode === reservation._id ? (
-            <div className="edit-form">
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="Party Size"
-                value={partySize}
-                onChange={(e) => setPartySize(e.target.value)}
-              />
-              <button onClick={() => handleUpdate(reservation._id)}>
-                Save Changes
-              </button>
-              <button onClick={() => setEditMode(null)}>
-                Cancel
-              </button>
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Manage Reservations</h1>
+      <div className="row">
+        {reservations.map((reservation) => (
+          <div key={reservation._id} className="col-md-6 mb-4">
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">{reservation.restaurant.name}</h5>
+                <p className="card-text">
+                  <strong>Date:</strong> {new Date(reservation.date).toLocaleDateString()}
+                </p>
+                <p className="card-text">
+                  <strong>Time:</strong> {reservation.time}
+                </p>
+                <p className="card-text">
+                  <strong>Party Size:</strong> {reservation.partySize}
+                </p>
+                <div className="d-flex justify-content-between">
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(reservation._id)}
+                  >
+                    <FaTrashAlt /> Delete
+                  </button>
+                  {editMode === reservation._id ? (
+                    <div>
+                      <input
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      />
+                      <input
+                        type="time"
+                        value={formData.time}
+                        onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Party Size"
+                        value={formData.partySize}
+                        onChange={(e) => setFormData({ ...formData, partySize: e.target.value })}
+                      />
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handleUpdate(reservation._id)}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="btn btn-info btn-sm"
+                      onClick={() => {
+                        setEditMode(reservation._id);
+                        setFormData({
+                          date: reservation.date.split('T')[0],  // Assuming date format is ISO string
+                          time: reservation.time,
+                          partySize: reservation.partySize,
+                        });
+                      }}
+                    >
+                      <FaEdit /> Edit
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          ) : (
-            <button className="edit-btn" onClick={() => setEditMode(reservation._id)}>
-              <FaEdit /> Edit
-            </button>
-          )}
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
 export default ManageReservations;
-
-<style jsx>{`
-  .manage-reservations {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
-
-  h1 {
-    text-align: center;
-    color: #004AAD;
-  }
-
-  .reservation-item {
-    background-color: #fff;
-    padding: 20px;
-    margin: 10px 0;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  .reservation-item p {
-    margin: 5px 0;
-  }
-
-  .reservation-item button {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-  }
-
-  .edit-btn {
-    background-color: #17a2b8;
-    color: white;
-  }
-
-  .delete-btn {
-    background-color: #dc3545;
-    color: white;
-  }
-
-  .edit-form input {
-    margin: 5px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-  }
-
-  .edit-form button {
-    background-color: #004AAD;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-
-  .edit-form button:hover {
-    background-color: #F4C561;
-  }
-
-  .edit-btn:hover, .delete-btn:hover {
-    opacity: 0.8;
-  }
-`}</style>
