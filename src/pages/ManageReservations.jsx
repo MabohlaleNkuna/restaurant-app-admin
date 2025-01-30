@@ -113,17 +113,13 @@ const ManageReservations = ({ restaurantId }) => {
                 <td className="border border-gray-300 px-4 py-2">{reservation.status}</td>
                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                   <button
-                    onClick={() =>
-                      updateReservationStatus(reservation._id, "Confirmed")
-                    }
+                    onClick={() => updateReservationStatus(reservation._id, "Confirmed")}
                     className="bg-blue-500 text-white px-2 py-1 rounded"
                   >
                     Confirm
                   </button>
                   <button
-                    onClick={() =>
-                      updateReservationStatus(reservation._id, "Cancelled")
-                    }
+                    onClick={() => updateReservationStatus(reservation._id, "Cancelled")}
                     className="bg-yellow-500 text-white px-2 py-1 rounded"
                   >
                     Cancel
