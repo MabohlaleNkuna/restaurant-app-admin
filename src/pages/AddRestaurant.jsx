@@ -19,7 +19,10 @@ const AddRestaurant = () => {
       }
 
       const response = await axios.post('http://localhost:5000/api/restaurants', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+         'Content-Type': 'multipart/form-data',
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+        },
       });
 
       alert('Restaurant added successfully');

@@ -1,123 +1,145 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect } from "react";
 
-const ManageReservations = () => {
+const ManageReservations = ({ restaurantId }) => {
   const [reservations, setReservations] = useState([]);
-  const [editMode, setEditMode] = useState(null);
-  const [formData, setFormData] = useState({ date: '', time: '', partySize: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch reservations on load and periodically update
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const { data } = await axios.get('/api/admin/reservations'); // Make sure this is correct URL for your backend
+  const fetchReservations = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:5000/api/reservations", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
         setReservations(data);
-      } catch (error) {
-        console.error('Error fetching reservations:', error);
+      } else {
+        setError(data.message || "Error fetching reservations");
       }
-    };
+    } catch (err) {
+      console.error(err);
+      setError("Error fetching reservations");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const updateReservationStatus = async (reservationId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/reservations/${reservationId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setReservations((prevReservations) =>
+          prevReservations.map((res) =>
+            res._id === reservationId ? { ...res, status: data.status } : res
+          )
+        );
+      } else {
+        setError(data.message || "Error updating reservation status");
+      }
+    } catch (err) {
+      setError("Error updating reservation status");
+    }
+  };
+
+  const deleteReservation = async (reservationId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/reservations/${reservationId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+      });
+      if (response.ok) {
+        setReservations((prevReservations) =>
+          prevReservations.filter((res) => res._id !== reservationId)
+        );
+      } else {
+        const data = await response.json();
+        setError(data.message || "Error deleting reservation");
+      }
+    } catch (err) {
+      setError("Error deleting reservation");
+    }
+  };
+
+  useEffect(() => {
     fetchReservations();
-
-    const interval = setInterval(fetchReservations, 5000); // Poll every 5 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleUpdate = async (id) => {
-    try {
-      const updatedReservation = await axios.put(`/api/admin/reservations/${id}`, formData);
-      setReservations((prev) =>
-        prev.map((r) => (r._id === id ? { ...r, ...updatedReservation.data } : r))
-      );
-      setEditMode(null);
-      setFormData({ date: '', time: '', partySize: '' });
-    } catch (error) {
-      console.error('Error updating reservation:', error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`/api/admin/reservations/${id}`);
-      setReservations((prev) => prev.filter((r) => r._id !== id));
-    } catch (error) {
-      console.error('Error deleting reservation:', error);
-    }
-  };
+  }, [restaurantId]);
 
   return (
-    <div className="container mt-4">
-      <h1 className="text-center mb-4">Manage Reservations</h1>
-      <div className="row">
-        {reservations.map((reservation) => (
-          <div key={reservation._id} className="col-md-6 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{reservation.restaurant.name}</h5>
-                <p className="card-text">
-                  <strong>Date:</strong> {new Date(reservation.date).toLocaleDateString()}
-                </p>
-                <p className="card-text">
-                  <strong>Time:</strong> {reservation.time}
-                </p>
-                <p className="card-text">
-                  <strong>Party Size:</strong> {reservation.partySize}
-                </p>
-                <div className="d-flex justify-content-between">
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Manage Reservations</h2>
+      {error && <p className="text-red-500">{error}</p>}
+      {loading ? (
+        <p>Loading reservations...</p>
+      ) : reservations.length === 0 ? (
+        <p>No reservations found.</p>
+      ) : (
+        <table className="w-full border-collapse border border-gray-200">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 px-4 py-2">Customer</th>
+              <th className="border border-gray-300 px-4 py-2">Date</th>
+              <th className="border border-gray-300 px-4 py-2">Time</th>
+              <th className="border border-gray-300 px-4 py-2">Party Size</th>
+              <th className="border border-gray-300 px-4 py-2">Status</th>
+              <th className="border border-gray-300 px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reservations.map((reservation) => (
+              <tr key={reservation._id}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {reservation.user?.name || "N/A"}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {new Date(reservation.date).toLocaleDateString()}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">{reservation.time}</td>
+                <td className="border border-gray-300 px-4 py-2">{reservation.partySize}</td>
+                <td className="border border-gray-300 px-4 py-2">{reservation.status}</td>
+                <td className="border border-gray-300 px-4 py-2 space-x-2">
                   <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDelete(reservation._id)}
+                    onClick={() =>
+                      updateReservationStatus(reservation._id, "Confirmed")
+                    }
+                    className="bg-blue-500 text-white px-2 py-1 rounded"
                   >
-                    <FaTrashAlt /> Delete
+                    Confirm
                   </button>
-                  {editMode === reservation._id ? (
-                    <div>
-                      <input
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      />
-                      <input
-                        type="time"
-                        value={formData.time}
-                        onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                      />
-                      <input
-                        type="number"
-                        placeholder="Party Size"
-                        value={formData.partySize}
-                        onChange={(e) => setFormData({ ...formData, partySize: e.target.value })}
-                      />
-                      <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => handleUpdate(reservation._id)}
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      className="btn btn-info btn-sm"
-                      onClick={() => {
-                        setEditMode(reservation._id);
-                        setFormData({
-                          date: reservation.date.split('T')[0],  // Assuming date format is ISO string
-                          time: reservation.time,
-                          partySize: reservation.partySize,
-                        });
-                      }}
-                    >
-                      <FaEdit /> Edit
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+                  <button
+                    onClick={() =>
+                      updateReservationStatus(reservation._id, "Cancelled")
+                    }
+                    className="bg-yellow-500 text-white px-2 py-1 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => deleteReservation(reservation._id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
