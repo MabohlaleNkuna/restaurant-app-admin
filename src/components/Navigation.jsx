@@ -14,6 +14,7 @@ const Navigation = ({ handleLogout }) => {
         {!isActive('/add-restaurant') && <Link to="/add-restaurant" style={styles.navLink}>Add Restaurant</Link>}
         {!isActive('/manage-reservations') && <Link to="/manage-reservations" style={styles.navLink}>Manage Reservations</Link>}
         {!isActive('/notifications') && <Link to="/notifications" style={styles.navLink}>Notifications</Link>}
+        {!isActive('/profile') && <Link to="/profile" style={styles.navLink}>Profile</Link>}
         <Link to="#" onClick={handleLogout} style={styles.logoutLink}>
           <span role="img" aria-label="logout">🚪</span> Logout
         </Link>
