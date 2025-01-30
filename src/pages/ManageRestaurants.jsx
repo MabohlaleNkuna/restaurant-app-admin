@@ -11,7 +11,10 @@ const ManageRestaurants = () => {
   const [image, setImage] = useState(null);
 
   useEffect(() => {
-    axios.get('/api/restaurants')
+    axios.get('/api/restaurants/admin',{headers: {
+      'Content-Type': 'multipart/form-data',
+       "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+  }},)
       .then((res) => {
         setRestaurants(res.data);
       })
@@ -25,10 +28,7 @@ const ManageRestaurants = () => {
     setRestaurants(restaurants.filter((r) => r._id !== id));
   };
 
-  const handleDeleteAll = async () => {
-    await axios.delete('/api/restaurants/deleteAll');
-    setRestaurants([]);
-  };
+ 
 
   const handleUpdate = async (id) => {
     const formData = new FormData();
@@ -136,9 +136,7 @@ const ManageRestaurants = () => {
           )}
         </div>
       ))}
-      <button className="delete-all-btn" onClick={handleDeleteAll}>
-        <FaTrash /> Delete All
-      </button>
+    
       <style jsx>{`
         .manage-restaurants {
           display: flex;

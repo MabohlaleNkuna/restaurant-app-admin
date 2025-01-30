@@ -7,21 +7,21 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ManageReservations from './pages/ManageReservations';
 import Navigation from './components/Navigation';
+import Profile from './pages/Profile';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check for the token in localStorage when the app initializes
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (token) {
-      setIsLoggedIn(true); // If the token exists, set isLoggedIn to true
+      setIsLoggedIn(true);
     }
   }, []);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem('adminToken'); // Remove the token on logout
+    localStorage.removeItem('adminToken');
   };
 
   return (
@@ -35,24 +35,11 @@ const App = () => {
           <Route path="/" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/register" element={<Register />} />
-
-          <Route
-            path="/dashboard"
-            element={isLoggedIn ? <AdminDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} />}
-          />
-          <Route
-            path="/manage-restaurants"
-            element={isLoggedIn ? <ManageRestaurants /> : <Login setIsLoggedIn={setIsLoggedIn} />}
-          />
-          <Route
-            path="/add-restaurant"
-            element={isLoggedIn ? <AddRestaurant /> : <Login setIsLoggedIn={setIsLoggedIn} />}
-          />
-          <Route
-            path="/manage-reservations"
-            element={isLoggedIn ? <ManageReservations /> : <Login setIsLoggedIn={setIsLoggedIn} />}
-          />
-
+          <Route path="/profile" element={isLoggedIn ? <Profile /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/dashboard" element={isLoggedIn ? <AdminDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/manage-restaurants" element={isLoggedIn ? <ManageRestaurants /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/add-restaurant" element={isLoggedIn ? <AddRestaurant /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/manage-reservations" element={isLoggedIn ? <ManageReservations /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="*" element={<div style={styles.notFound}>404 - Page Not Found</div>} />
         </Routes>
       </div>

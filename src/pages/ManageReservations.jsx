@@ -9,7 +9,7 @@ const ManageReservations = ({ restaurantId }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5000/api/reservations", {
+      const response = await fetch("http://localhost:5000/api/reservations/admin", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
