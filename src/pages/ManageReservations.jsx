@@ -35,7 +35,7 @@ const ManageReservations = ({ restaurantId }) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -46,6 +46,7 @@ const ManageReservations = ({ restaurantId }) => {
             res._id === reservationId ? { ...res, status: data.status } : res
           )
         );
+        alert(`Reservation has been ${newStatus.toLowerCase()} and the user has been notified.`);
       } else {
         setError(data.message || "Error updating reservation status");
       }
@@ -53,19 +54,20 @@ const ManageReservations = ({ restaurantId }) => {
       setError("Error updating reservation status");
     }
   };
-
+  
   const deleteReservation = async (reservationId) => {
     try {
       const response = await fetch(`http://localhost:5000/api/reservations/${reservationId}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
       });
       if (response.ok) {
         setReservations((prevReservations) =>
           prevReservations.filter((res) => res._id !== reservationId)
         );
+        alert("Reservation has been deleted, and the user has been notified.");
       } else {
         const data = await response.json();
         setError(data.message || "Error deleting reservation");
@@ -74,6 +76,7 @@ const ManageReservations = ({ restaurantId }) => {
       setError("Error deleting reservation");
     }
   };
+  
 
   useEffect(() => {
     fetchReservations();
@@ -113,10 +116,10 @@ const ManageReservations = ({ restaurantId }) => {
                 <td className="border border-gray-300 px-4 py-2">{reservation.status}</td>
                 <td className="border border-gray-300 px-4 py-2 space-x-2">
                   <button
-                    onClick={() => updateReservationStatus(reservation._id, "Confirmed")}
+                    onClick={() => updateReservationStatus(reservation._id, "Approved")}
                     className="bg-blue-500 text-white px-2 py-1 rounded"
                   >
-                    Confirm
+                    Approve
                   </button>
                   <button
                     onClick={() => updateReservationStatus(reservation._id, "Cancelled")}

@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import ManageReservations from './pages/ManageReservations';
 import Navigation from './components/Navigation';
 import Profile from './pages/Profile';
+import Notifications from './pages/Notifications';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,10 +37,23 @@ const App = () => {
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={isLoggedIn ? <Profile /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="/dashboard" element={isLoggedIn ? <AdminDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route
+            path="/dashboard"
+            element={
+              isLoggedIn ? (
+                <AdminDashboard>
+                  <ManageReservations restaurantId="your-restaurant-id" />
+                  <Notifications />
+                </AdminDashboard>
+              ) : (
+                <Login setIsLoggedIn={setIsLoggedIn} />
+              )
+            }
+          />
           <Route path="/manage-restaurants" element={isLoggedIn ? <ManageRestaurants /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/add-restaurant" element={isLoggedIn ? <AddRestaurant /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/manage-reservations" element={isLoggedIn ? <ManageReservations /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/notifications" element={isLoggedIn ? <Notifications /> : <Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="*" element={<div style={styles.notFound}>404 - Page Not Found</div>} />
         </Routes>
       </div>
