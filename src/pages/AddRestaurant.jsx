@@ -7,8 +7,10 @@ const AddRestaurant = () => {
   const [location, setLocation] = useState('');
   const [cuisine, setCuisine] = useState('');
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false); 
 
   const handleAddRestaurant = async () => {
+    setLoading(true); 
     try {
       const formData = new FormData();
       formData.append('name', name);
@@ -18,9 +20,9 @@ const AddRestaurant = () => {
         formData.append('image', image);
       }
 
-      const response = await axios.post('http://localhost:5000/api/restaurants', formData, {
+      await axios.post('http://localhost:5000/api/restaurants', formData, {
         headers: {
-         'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data',
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
         },
       });
@@ -32,6 +34,8 @@ const AddRestaurant = () => {
       setImage(null);
     } catch (error) {
       alert(`Failed to add restaurant: ${error.response ? error.response.data.message : error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,8 +91,16 @@ const AddRestaurant = () => {
               className="btn btn-warning w-100 mt-3"
               onClick={handleAddRestaurant}
               style={{ backgroundColor: '#F4C561', color: 'black' }}
+              disabled={loading} 
             >
-              Add Restaurant
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                  Adding...
+                </>
+              ) : (
+                "Add Restaurant"
+              )}
             </button>
           </div>
         </div>
