@@ -9,7 +9,7 @@ const ManageReservations = ({ restaurantId }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5000/api/reservations/admin", {
+      const response = await fetch("https://restaurantapp-server-1.onrender.com/api/reservations/admin", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
@@ -31,7 +31,7 @@ const ManageReservations = ({ restaurantId }) => {
 
   const updateReservationStatus = async (reservationId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/reservations/${reservationId}`, {
+      const response = await fetch(`https://restaurantapp-server-1.onrender.com/api/reservations/${reservationId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ const ManageReservations = ({ restaurantId }) => {
   
   const deleteReservation = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/reservations/${reservationId}`, {
+      const response = await fetch(`https://restaurantapp-server-1.onrender.com/api/reservations/${reservationId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,

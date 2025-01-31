@@ -8,7 +8,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
+      const response = await fetch("https://restaurantapp-server-1.onrender.com/api/notifications", {
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,

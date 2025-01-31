@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -19,11 +18,11 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/api/admin/profile', {
+        const response = await axios.get('https://restaurantapp-server-1.onrender.com/api/admin/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        setAdmin(response.data); // Set admin details
+        setAdmin(response.data);
       } catch (error) {
         console.error('Error fetching admin profile:', error);
       }
@@ -35,7 +34,7 @@ const Profile = () => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put('http://localhost:5000/api/admin/profile', admin, {
+      await axios.put('https://restaurantapp-server-1.onrender.com/api/admin/profile', admin, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Profile updated successfully!');

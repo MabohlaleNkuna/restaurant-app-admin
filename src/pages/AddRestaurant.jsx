@@ -20,7 +20,7 @@ const AddRestaurant = () => {
         formData.append('image', image);
       }
 
-      await axios.post('http://localhost:5000/api/restaurants', formData, {
+      await axios.post('https://restaurantapp-server-1.onrender.com/api/restaurants', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
