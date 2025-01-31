@@ -11,7 +11,7 @@ const ManageRestaurants = () => {
   const [image, setImage] = useState(null);
 
   useEffect(() => {
-    axios.get('/api/restaurants/admin',{headers: {
+    axios.get('https://restaurantapp-server-1.onrender.com/api/restaurants/admin',{headers: {
       'Content-Type': 'multipart/form-data',
        "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
   }},)
@@ -24,7 +24,7 @@ const ManageRestaurants = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    await axios.delete(`/api/restaurants/${id}`);
+    await axios.delete(`https://restaurantapp-server-1.onrender.com/api/restaurants/${id}`);
     setRestaurants(restaurants.filter((r) => r._id !== id));
   };
 
@@ -37,7 +37,7 @@ const ManageRestaurants = () => {
     if (cuisine) formData.append('cuisine', cuisine);
     if (image) formData.append('image', image);
 
-    await axios.put(`/api/restaurants/${id}`, formData, {
+    await axios.put(`https://restaurantapp-server-1.onrender.com/api/restaurants/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
