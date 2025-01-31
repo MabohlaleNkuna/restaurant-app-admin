@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -8,6 +8,13 @@ const Login = ({ setIsLoggedIn }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      navigate('/dashboard'); // Redirect if already logged in
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
