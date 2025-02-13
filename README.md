@@ -4,7 +4,7 @@ This is the **Restaurant Reservation Admin** application, designed for restauran
 
 ## Hosted Application
 
-The backend of the application is hosted at:
+The admin app of the application is hosted at:
 **[Restaurant Admin Backend](https://restaurant-app-admin.netlify.app)**
 
 ## Features
